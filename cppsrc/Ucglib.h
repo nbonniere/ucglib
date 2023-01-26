@@ -114,6 +114,12 @@ class Ucglib : public Print
     ucg_int_t getStrWidth(const char *s)
       { return ucg_GetStrWidth(&ucg, s); }
     
+    void setRedBlueTwist( bool tw )
+    { ucg_TwistRedBlue( tw ); }
+
+    void invertDisplay( bool inv )
+      { ucg_InvertDisplay(&ucg, inv ); }
+
     void setColor(uint8_t idx, uint8_t r, uint8_t g, uint8_t b)
       { ucg_SetColor(&ucg, idx, r, g, b); }
     void setColor(uint8_t r, uint8_t g, uint8_t b)
@@ -330,6 +336,25 @@ class Ucglib_ILI9341_18x240x320_SWSPI : public Ucglib4WireSWSPI
     { }
   //Ucglib_ILI9341_18x240x320_SWSPI( uint8_t scl, uint8_t sda, uint8_t cd, uint8_t cs = UCG_PIN_VAL_NONE, uint8_t reset = UCG_PIN_VAL_NONE) : 
   //  Ucglib4WireSWSPI(ucg_dev_ili9341_18x240x320, ucg_ext_none, /*scl=*/ scl, /*sda=*/ sda, /*cd=*/ cd , /*cs=*/ cs, /*reset=*/ reset)
+  //  { }
+};
+
+class Ucglib_ILI9342_18x320x240_HWSPI : public Ucglib4WireHWSPI
+{
+  public:
+  Ucglib_ILI9342_18x320x240_HWSPI( uint8_t cd, uint8_t cs = UCG_PIN_VAL_NONE, uint8_t reset = UCG_PIN_VAL_NONE) : 
+    Ucglib4WireHWSPI(ucg_dev_ili9342_18x320x240, ucg_ext_ili9342_18, /*cd=*/ cd , /*cs=*/ cs, /*reset=*/ reset)
+    { }
+};
+
+class Ucglib_ILI9342_18x320x240_SWSPI : public Ucglib4WireSWSPI
+{
+  public:
+  Ucglib_ILI9342_18x320x240_SWSPI( uint8_t scl, uint8_t sda, uint8_t cd, uint8_t cs = UCG_PIN_VAL_NONE, uint8_t reset = UCG_PIN_VAL_NONE) : 
+    Ucglib4WireSWSPI(ucg_dev_ili9342_18x320x240, ucg_ext_ili9342_18, /*scl=*/ scl, /*sda=*/ sda, /*cd=*/ cd , /*cs=*/ cs, /*reset=*/ reset)
+    { }
+  //Ucglib_ILI9342_18x320x240_SWSPI( uint8_t scl, uint8_t sda, uint8_t cd, uint8_t cs = UCG_PIN_VAL_NONE, uint8_t reset = UCG_PIN_VAL_NONE) : 
+  //  Ucglib4WireSWSPI(ucg_dev_ili9342_18x320x240, ucg_ext_none, /*scl=*/ scl, /*sda=*/ sda, /*cd=*/ cd , /*cs=*/ cs, /*reset=*/ reset)
   //  { }
 };
 
