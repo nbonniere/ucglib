@@ -56,9 +56,10 @@ const ucg_pgm_uint8_t ucg_ili9342_set_pos_dir0_seq[] =
   
   /* 0x008 horizontal increment (dir = 0) */
   /* 0x008 vertical increment (dir = 1) */
-  /* 0x048 horizontal deccrement (dir = 2) */
-  /* 0x088 vertical deccrement (dir = 3) */
+  /* 0x048 horizontal decrement (dir = 2) */
+  /* 0x088 vertical decrement (dir = 3) */
   UCG_C11( 0x036, 0x008),
+  UCG_C11( 0x036, 0x008),		/* it seems that this command needs to be sent twice */ /* should be check again */
   UCG_C10(0x02a),	UCG_VARX(8,0x01, 0), UCG_VARX(0,0x0ff, 0), UCG_A2(0x001, 0x03f),					/* set x position */
   UCG_C10(0x02b),	UCG_VARY(0,0x00, 0), UCG_VARY(0,0x0ff, 0), UCG_A2(0x000, 0x0ef),		/* set y position */
 
@@ -72,9 +73,10 @@ const ucg_pgm_uint8_t ucg_ili9342_set_pos_dir1_seq[] =
   UCG_CS(0),					/* enable chip */
   /* 0x008 horizontal increment (dir = 0) */
   /* 0x008 vertical increment (dir = 1) */
-  /* 0x048 horizontal deccrement (dir = 2) */
-  /* 0x088 vertical deccrement (dir = 3) */
+  /* 0x048 horizontal decrement (dir = 2) */
+  /* 0x088 vertical decrement (dir = 3) */
   UCG_C11( 0x036, 0x008),
+  UCG_C11( 0x036, 0x008),		/* it seems that this command needs to be sent twice */ /* should be check again */
   UCG_C10(0x02a),	UCG_VARX(8,0x01, 0), UCG_VARX(0,0x0ff, 0), UCG_VARX(8,0x01, 0), UCG_VARX(0,0x0ff, 0),					/* set x position */
   UCG_C10(0x02b),	UCG_VARY(0,0x00, 0), UCG_VARY(0,0x0ff, 0), UCG_A2(0x000, 0x0ef),		/* set y position */
 
@@ -89,8 +91,8 @@ const ucg_pgm_uint8_t ucg_ili9342_set_pos_dir2_seq[] =
   
   /* 0x008 horizontal increment (dir = 0) */
   /* 0x008 vertical increment (dir = 1) */
-  /* 0x048 horizontal deccrement (dir = 2) */
-  /* 0x088 vertical deccrement (dir = 3) */
+  /* 0x048 horizontal decrement (dir = 2) */
+  /* 0x088 vertical decrement (dir = 3) */
   
   UCG_C11( 0x036, 0x048),
   UCG_C11( 0x036, 0x048),			/* it seems that this command needs to be sent twice */ /* should be check again */
@@ -108,8 +110,8 @@ const ucg_pgm_uint8_t ucg_ili9342_set_pos_dir3_seq[] =
   
   /* 0x008 horizontal increment (dir = 0) */
   /* 0x008 vertical increment (dir = 1) */
-  /* 0x0c8 horizontal deccrement (dir = 2) */
-  /* 0x0c8 vertical deccrement (dir = 3) */
+  /* 0x048 horizontal decrement (dir = 2) */
+  /* 0x088 vertical decrement (dir = 3) */
   UCG_C11( 0x036, 0x088),
   UCG_C11( 0x036, 0x088),		/* it seems that this command needs to be sent twice */ /* should be check again */
   UCG_C10(0x02a),	UCG_VARX(8,0x01, 0), UCG_VARX(0,0x0ff, 0), UCG_VARX(8,0x01, 0), UCG_VARX(0,0x0ff, 0),					/* set x position */
@@ -136,14 +138,14 @@ ucg_int_t ucg_handle_ili9342_l90fx(ucg_t *ucg)
 	break;
       case 2: 
 	tmp = ucg->arg.pixel.pos.x;
-	ucg->arg.pixel.pos.x = 320-1-tmp; //239-tmp;
+	ucg->arg.pixel.pos.x = 320-1-tmp;
 	ucg_com_SendCmdSeq(ucg, ucg_ili9342_set_pos_dir2_seq);	
 	ucg->arg.pixel.pos.x = tmp;
 	break;
       case 3: 
       default: 
 	tmp = ucg->arg.pixel.pos.y;
-	ucg->arg.pixel.pos.y = 240-1-tmp; //319-tmp;
+	ucg->arg.pixel.pos.y = 240-1-tmp;
 	ucg_com_SendCmdSeq(ucg, ucg_ili9342_set_pos_dir3_seq);	
 	ucg->arg.pixel.pos.y = tmp;
 	break;
@@ -225,7 +227,8 @@ ucg_int_t ucg_handle_ili9342_l90tc(ucg_t *ucg)
       {
 	if ( (ucg->arg.dir&1) == 0 )
 	{
-	  buf[5] = ucg->arg.pixel.pos.x;
+	  buf[3] = ucg->arg.pixel.pos.x>>8;
+	  buf[5] = ucg->arg.pixel.pos.x&255;
 	}
 	else
 	{
@@ -280,14 +283,14 @@ ucg_int_t ucg_handle_ili9342_l90se(ucg_t *ucg)
 	break;
       case 2: 
 	tmp = ucg->arg.pixel.pos.x;
-	ucg->arg.pixel.pos.x = 320-1-tmp; //239-tmp;
+	ucg->arg.pixel.pos.x = 320-1-tmp;
 	ucg_com_SendCmdSeq(ucg, ucg_ili9342_set_pos_dir2_seq);	
 	ucg->arg.pixel.pos.x = tmp;
 	break;
       case 3: 
       default: 
 	tmp = ucg->arg.pixel.pos.y;
-	ucg->arg.pixel.pos.y = 240-1-tmp; //319-tmp;
+	ucg->arg.pixel.pos.y = 240-1-tmp;
 	ucg_com_SendCmdSeq(ucg, ucg_ili9342_set_pos_dir3_seq);	
 	ucg->arg.pixel.pos.y = tmp;
 	break;
@@ -350,8 +353,8 @@ ucg_int_t ucg_dev_ic_ili9342_18(ucg_t *ucg, ucg_int_t msg, void *data)
     	ucg_com_SendCmdSeq(ucg, ucg_ili9342_normal_display_seq);
       	return 1;
     case UCG_MSG_GET_DIMENSION:
-      ((ucg_wh_t *)data)->w = 320; //240;
-      ((ucg_wh_t *)data)->h = 240; //320;
+      ((ucg_wh_t *)data)->w = 320;
+      ((ucg_wh_t *)data)->h = 240;
       return 1;
     case UCG_MSG_DRAW_PIXEL:
       if ( ucg_clip_is_pixel_visible(ucg) !=0 )
